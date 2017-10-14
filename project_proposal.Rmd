@@ -1,0 +1,24 @@
+---
+title: "Predicting Diversity in College STEM Programs"
+author: "Erin Anthony"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The Problem
+#### American colleges and universities still struggle to enroll and retain a diverse student body of STEM (science, technology, engineering, and math) majors. Examining the characteristics of institutions of higher education which are relatively more and less successful in this endeavor may provide important insight into which measures may be most effective in increasing the diversity of STEM programs.
+
+## The Client
+#### The intended client for this study is a college or univeristy that wishes to increase the proportion of diverse STEM majors it attracts and retains. The insights revealed may assist the institution in determining what interventions can be employed to increase STEM diversity.
+
+## The Data
+#### The data used for this project will be collected from the IPEDS (Integrated Postsecondary Education Data System) database, which is publicly available at https://nces.ed.gov/ipeds. The data includes information on student characteristics, such as race and gender, as well as institutional characteristics, such as cost of attendance, student-to-faculty ratio, and institution size.
+
+## The Approach
+#### The data will be examined through statistical analyses and the determination of any significant correlations. A logistic regression model will be created with the goal of predicting which institutions will have a diverse body of STEM majors.
+
+## The Deliverables
+#### The deliverables for this project will include the R code used for the model and correlations, as well as a paper including both a written summary and plots.
