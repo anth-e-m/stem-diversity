@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### Read in the data
 ```{r read in the data}
-stem = read.csv("csv-data/all-data.csv")
+stem = read.csv("csv-data/all-data.csv") # 7357 obs of 150 variables
 ```
 
 ### Examine the variable levels of the data selection variables
@@ -58,4 +58,35 @@ levels(stem$DRVEF2015.Percent.of.undergraduate.enrollment.that.are.Black.or.Afri
 levels(stem$DRVEF2015.Percent.of.undergraduate.enrollment.that.are.Hispanic.Latino) # ratio, remove missing values
 levels(stem$DRVGR2015.Graduation.rate...Bachelor.degree.within.6.years..Black..non.Hispanic) # ratio, remove missing values
 levels(stem$DRVGR2015.Graduation.rate...Bachelor.degree.within.6.years..Hispanic) # ratio, remove missing values
+```
+
+#### Trim the data set and rename the columns
+```{r trim the data set and rename the columns}
+stem.df <- stem[, c(10,12,18,26,8,13,14,15,17,21,24,34,35,38,39,40,
+                      41,42,43,44,46,47,48,49,50,51,53,71,113,117,121,
+                      93,94,144,145)] # 7357 obs of 35 variables
+
+colnames(stem.df) <- c("ugrad", "degree", "active", "bachelors", "region", "hbcu", "tribal", "urban", "open", "landGrant", "associates", "allDistance", "partDistance", "studyAbroad", "weekend", "remedial", "counseling", "employment", "placement", "dayCare", "tuitionGuarantee", "tuitionPrepaid", "tuitionPlan", "oncampusHousing", "mealPlan", "instateTuition", "outstateTuition", "size", "facultyRatio", "grantAid", "loadAid", "blackEnroll", "latinoEnroll", "blackGrad", "latinoGrad")
+```
+
+#### Only include active institutions granting Bachelor's degrees
+```{r only include active institutions granting Bachelor's degrees}
+stem.df <- subset(stem.df, ugrad=="Undergraduate degree or certificate offering" & degree=="Degree-granting" & active=="Yes" & bachelors=="Yes") # 2752 obs of 35 variables
+```
+
+#### Remove missing values
+```{r remove missing values}
+stem.df.clean <- na.omit(stem.df) # 1722 obs of 35 variables
+```
+
+#### Feature engineer some new independent variables
+```{r feature engineer some new independent variables}
+# combine employment and placement services
+stem.df.clean$placeEmploy <- with(stem.df.clean, ifelse(employment=="Yes"|placement=="Yes", "Yes", "No"))
+
+# combine tuition guarantee, prepaid tuition, and tuition payment plan
+stem.df.clean$tuitionOptions <- with(stem.df.clean, ifelse(tuitionGuarantee=="Yes"|tuitionPlan=="Yes"|tuitionPrepaid=="Yes", "Yes", "No"))
+
+# calculate the ratio of out-of-state to in-state tuition
+stem.df.clean$tuitionRatio <- stem.df.clean$outstateTuition/stem.df.clean$instateTuition
 ```
