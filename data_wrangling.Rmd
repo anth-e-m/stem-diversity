@@ -10,185 +10,209 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Read in the data
 ```{r read in the data}
-stem = read.csv("csv-data/all-data.csv") # 7357 obs of 150 variables
+eduData = read.csv("csv-data/all-data.csv") # 7357 obs of 150 variables
 ```
 
 ### Examine the variable levels of the data selection variables
 ```{r examine the variable levels of the data selection variables}
-levels(stem$HD2015.Undergraduate.offering) # remove "No undergraduate offering"
-levels(stem$HD2015.Degree.granting.status) # remove "Nondegree-granting, primarily postsecondary"
-levels(stem$HD2015.Institution.is.active.in.current.year) # remove missing values
-levels(stem$IC2015.Bachelor.s.degree) # remove missing values, remove "Implied no", remove "Not applicable"
+levels(eduData$HD2015.Undergraduate.offering) # remove "No undergraduate offering"
+levels(eduData$HD2015.Degree.granting.status) # remove "Nondegree-granting, primarily postsecondary"
+levels(eduData$HD2015.Institution.is.active.in.current.year) # remove missing values
+levels(eduData$IC2015.Bachelor.s.degree) # remove missing values, remove "Implied no", remove "Not applicable"
 ```
 
 ### Examine the variable levels of the independent variables
 ```{r examine the variable levels of the independent variables}
-levels(stem$HD2015.Bureau.of.Economic.Analysis..BEA..regions) # categorical, missing values
-levels(stem$HD2015.Historically.Black.College.or.University) # binary, missing values
-levels(stem$HD2015.Tribal.college) # binary, missing values
-levels(stem$HD2015.Degree.of.urbanization..Urban.centric.locale.) # categorical, missing values
-levels(stem$IC2015.Open.admission.policy) # binary, missing values, remove "Not applicable"
-levels(stem$HD2015.Land.Grant.Institution) # binary, remove missing values
-levels(stem$IC2015.Associate.s.degree) # binary, missing values
-levels(stem$IC2015.All.programs.offered.completely.via.distance.education) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Undergraduate.programs.or.courses.are.offered.via.distance.education) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Study.abroad) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Weekend.evening..college) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Remedial.services) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Academic.career.counseling.service) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Employment.services.for.students) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Placement.services.for.completers) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.On.campus.day.care.for.students..children) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Tuition.guaranteed.plan) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Prepaid.tuition.plan) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Tuition.payment.plan) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Institution.provide.on.campus.housing) # binary, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015.Institution.provides.board.or.meal.plan) # binary, two "Yes" levels, missing values, "Not applicable", "Not reported"
-levels(stem$IC2015_AY.In.state.average.tuition.for.full.time.undergraduates) # ratio, missing values
-levels(stem$IC2015_AY.Out.of.state.average.tuition.for.full.time.undergraduates) # ratio, missing values
-levels(stem$HD2015.Institution.size.category) # categorical, missing values, "Not applicable", "Not reported"
-levels(stem$EF2015D.Student.to.faculty.ratio) # ratio, missing values
-levels(stem$SFA1415.Average.amount.of.federal..state..local..institutional.or.other.sources.of.grant.aid.awarded.to.undergraduate.students) # ratio, missing values
-levels(stem$SFA1415.Average.amount.of.federal.student.loans.awarded.to.undergraduate.students) # ratio, missing values
+levels(eduData$HD2015.Bureau.of.Economic.Analysis..BEA..regions) # categorical, missing values
+levels(eduData$HD2015.Historically.Black.College.or.University) # binary, missing values
+levels(eduData$HD2015.Tribal.college) # binary, missing values
+levels(eduData$HD2015.Degree.of.urbanization..Urban.centric.locale.) # categorical, missing values
+levels(eduData$IC2015.Open.admission.policy) # binary, missing values, remove "Not applicable"
+levels(eduData$HD2015.Land.Grant.Institution) # binary, remove missing values
+levels(eduData$IC2015.Associate.s.degree) # binary, missing values
+levels(eduData$IC2015.All.programs.offered.completely.via.distance.education) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Undergraduate.programs.or.courses.are.offered.via.distance.education) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Study.abroad) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Weekend.evening..college) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Remedial.services) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Academic.career.counseling.service) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Employment.services.for.students) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Placement.services.for.completers) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.On.campus.day.care.for.students..children) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Tuition.guaranteed.plan) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Prepaid.tuition.plan) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Tuition.payment.plan) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Institution.provide.on.campus.housing) # binary, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015.Institution.provides.board.or.meal.plan) # binary, two "Yes" levels, missing values, "Not applicable", "Not reported"
+levels(eduData$IC2015_AY.In.state.average.tuition.for.full.time.undergraduates) # ratio, missing values
+levels(eduData$IC2015_AY.Out.of.state.average.tuition.for.full.time.undergraduates) # ratio, missing values
+levels(eduData$HD2015.Institution.size.category) # categorical, missing values, "Not applicable", "Not reported"
+levels(eduData$EF2015D.Student.to.faculty.ratio) # ratio, missing values
+levels(eduData$SFA1415.Average.amount.of.federal..state..local..institutional.or.other.sources.of.grant.aid.awarded.to.undergraduate.students) # ratio, missing values
+levels(eduData$SFA1415.Average.amount.of.federal.student.loans.awarded.to.undergraduate.students) # ratio, missing values
 ```
 
 ### Examine the variable levels of the dependent variables
 ```{r examine the variable levels of the dependent variables}
-levels(stem$DRVEF2015.Percent.of.undergraduate.enrollment.that.are.Black.or.African.American) # ratio, missing values
-levels(stem$DRVEF2015.Percent.of.undergraduate.enrollment.that.are.Hispanic.Latino) # ratio, missing values
-levels(stem$DRVGR2015.Graduation.rate...Bachelor.degree.within.6.years..Black..non.Hispanic) # ratio, missing values
-levels(stem$DRVGR2015.Graduation.rate...Bachelor.degree.within.6.years..Hispanic) # ratio, missing values
+levels(eduData$DRVEF2015.Percent.of.undergraduate.enrollment.that.are.Black.or.African.American) # ratio, missing values
+levels(eduData$DRVEF2015.Percent.of.undergraduate.enrollment.that.are.Hispanic.Latino) # ratio, missing values
 ```
 
 ### Trim the data set and rename the columns
 ```{r trim the data set and rename the columns}
-stem.df <- stem[, c(10,12,18,26,8,13,14,15,17,21,24,34,35,38,39,40,
+edu.df <- eduData[, c(10,12,18,26,8,13,14,15,17,21,24,34,35,38,39,40,
                       41,42,43,44,46,47,48,49,50,51,53,71,113,117,121,
-                      93,94,144,145)] # 7357 obs of 35 variables
+                      93,94)] # 7357 obs of 33 variables
 
-colnames(stem.df) <- c("ugrad", "degree", "active", "bachelors", "region", "hbcu", "tribal", "urban", "open", "landGrant", "associates", "allDistance", "partDistance", "studyAbroad", "weekend", "remedial", "counseling", "employment", "placement", "dayCare", "tuitionGuarantee", "tuitionPrepaid", "tuitionPlan", "oncampusHousing", "mealPlan", "instateTuition", "outstateTuition", "size", "facultyRatio", "grantAid", "loanAid", "blackEnroll", "latinoEnroll", "blackGrad", "latinoGrad")
+colnames(edu.df) <- c("ugrad", "degree", "active", "bachelors", "region", "hbcu", "tribal", "urban", "open", "landGrant", "associates", "allDistance", "partDistance", "studyAbroad", "weekend", "remedial", "counseling", "employment", "placement", "dayCare", "tuitionGuarantee", "tuitionPrepaid", "tuitionPlan", "oncampusHousing", "mealPlan", "instateTuition", "outstateTuition", "size", "facultyRatio", "grantAid", "loanAid", "blackEnroll", "latinoEnroll")
 ```
 
-### Only include active institutions granting Bachelor's degrees
-```{r only include active institutions granting Bachelor's degrees}
-stem.df <- subset(stem.df, ugrad=="Undergraduate degree or certificate offering" & degree=="Degree-granting" & active=="Yes" & bachelors=="Yes") # 2752 obs of 35 variables
+### Only include active institutions granting Bachelor\'s degrees
+```{r only include active institutions granting Bachelor\'s degrees}
+edu.df <- subset(edu.df, ugrad=="Undergraduate degree or certificate offering" & degree=="Degree-granting" & active=="Yes" & bachelors=="Yes") # 2752 obs of 33 variables
+edu.df$ugrad <- NULL
+edu.df$degree <- NULL
+edu.df$active <- NULL
+edu.df$bachelors <- NULL # 29 variables
 ```
 
-### Examine data to determine missing value imputation methods
-```{r examine data to determine missing value imputation methods}
-# find rows where data is missing from most columns
-NA.df <- stem.df[(is.na(stem.df$blackEnroll) & is.na(stem.df$latinoEnroll) & is.na(stem.df$blackGrad) & is.na(stem.df$latinoGrad) & is.na(stem.df$instateTuition) & stem.df$open=="Not applicable" | stem.df$allDistance=="Not reported"),]
+### Combine black and latino enrollments to use as the target variable
+```{r combine black/latino enrollments to use as the target variable}
+edu.df$minorityEnroll <- edu.df$blackEnroll + edu.df$latinoEnroll
+edu.df$blackEnroll <- NULL
+edu.df$latinoEnroll <- NULL # 28 variables
+```
 
-head(NA.df, 5)
+### Examine the data to determine missing value imputation methods and feature engineer some new independent variables
+```{r examine the data to determine missing value imputation methods}
+# remove rows where data is missing from the dependent variable column
+edu.df <- edu.df[!is.na(edu.df$minorityEnroll),] # 2698 obs of 28 var
 
-# remove these rows
-stem.df <- stem.df[!row.names(stem.df) %in% row.names(NA.df),]
-# 2709 obs of 35 variables
+# find columns that still contain missing values
+colSums(is.na(edu.df)) # instateTuition (40), outstateTuition (40), grantAid (18), loanAid (127)
 
-table(stem.df$region) # categorical, no missing values
-table(stem.df$hbcu) # 2623 No, 86 Yes, no missing values
-table(stem.df$tribal) # 2696 No, 13 Yes, no missing values
-table(stem.df$urban) # categorical, no missing values
+table(edu.df$region) # 9 levels, categorical variable
+# replace levels with shorter name codes
+edu.df$region <- with(edu.df, ifelse(region=="Far West AK CA HI NV OR WA", "FW", ifelse(region=="Great Lakes IL IN MI OH WI", "GL", ifelse(region=="Mid East DE DC MD NJ NY PA", "ME", ifelse(region=="New England CT ME MA NH RI VT", "NE", ifelse(region=="Plains IA KS MN MO NE ND SD", "PL", ifelse(region=="Rocky Mountains CO ID MT UT WY", "RM", ifelse(region=="Southeast AL AR FL GA KY LA MS NC SC TN VA WV", "SE", ifelse(region=="Southwest AZ NM OK TX", "SW", "US")))))))))
+table(edu.df$region)
 
-table(stem.df$open) # 1874 No, 701 Yes, 134 Not applicable*** 
+table(edu.df$hbcu) # 2612 No, 86 Yes
+table(edu.df$tribal) # 2685 No, 13 Yes
+
+table(edu.df$urban) # 12 levels, categorical variable
+# replace levels with shorter, ordered names
+edu.df$urban <- with(edu.df, ifelse(urban=="City: Large", "City:L", ifelse(urban=="City: Midsize", "City:M", ifelse(urban=="City: Small", "City:S", ifelse(urban=="Rural: Distant", "Rural:D", ifelse(urban=="Rural: Fringe", "Rural:F", ifelse(urban=="Rural: Remote", "Rural:R", ifelse(urban=="Suburb: Large", "Suburb:L", ifelse(urban=="Suburb: Midsize", "Suburb:M", ifelse(urban=="Suburb: Small", "Suburb:S", ifelse(urban=="Town: Distant", "Town:D", ifelse(urban=="Town: Fringe", "Town:F", "Town:R"))))))))))))
+edu.df$urban <- ordered(edu.df$urban, levels = c("Rural:R", "Rural:D", "Rural:F", "Town:R", "Town:D", "Town:F", "Suburb:S", "Suburb:M", "Suburb:L", "City:S", "City:M", "City:L"))
+table(edu.df$urban)
+
+table(edu.df$open) # 1870 No, 697 Yes, 131 Not applicable
 # replace 'N/A' values in the 'open' column with 'No' values
-stem.df$open[stem.df$open=="Not applicable"] <- "No"
-table(stem.df$open) # 2008 No, 701 Yes, no missing values
+edu.df$open[edu.df$open=="Not applicable"] <- "No"
+table(edu.df$open) # 2001 No, 697 Yes
 
-table(stem.df$landGrant) # 2625 No, 84 Yes, no missing values
-table(stem.df$associates) # 1193 No, 1516 Yes, no missing values
-table(stem.df$allDistance) # 2668 No, 41 Yes, no missing values
-table(stem.df$partDistance) # 2017 Yes, 692 No, no missing values
-table(stem.df$studyAbroad) # 1584 Yes, 1125 No, no missing values
-table(stem.df$weekend) # 1371 No, 1338 Yes, no missing values
-table(stem.df$remedial) # 1879 Yes, 830 No, no missing values
-table(stem.df$counseling) # 2662 Yes, 47 No, no missing values
-table(stem.df$employment) # 2304 Yes, 405 No, no missing values
-table(stem.df$placement) # 2146 Yes, 563 No, no missing values
-table(stem.df$dayCare) # 2236 No, 473 Yes, no missing values
-table(stem.df$tuitionGuarantee) # 2537 No, 172 Yes, no missing values
-table(stem.df$tuitionPrepaid) # 2448 No, 261 Yes, no missing values
-table(stem.df$tuitionPlan) # 2267 Yes, 442 No, no missing values
-table(stem.df$oncampusHousing) # 1764 Yes, 945 No, no missing values
+table(edu.df$landGrant) # 2614 Not a Land Grant, 84 Land Grant
+# replace levels with No and Yes
+edu.df$landGrant <- with(edu.df, ifelse(landGrant=="Land Grant Institution", "Yes", "No"))
+table(edu.df$landGrant)
 
-table(stem.df$mealPlan) # 1620 Yes (2 lev), 1089 No, no missing values
-# combine the two 'Yes' levels into one
-stem.df$mealPlan <- with(stem.df, ifelse(mealPlan=="Yes, number of meals in the maximum meal plan offered"|mealPlan=="Yes, number of meals per week can vary", "Yes", "No"))
-table(stem.df$mealPlan)
+table(edu.df$associates) # 1189 No, 1509 Yes
+table(edu.df$allDistance) # 2659 No, 39 Yes
+table(edu.df$partDistance) # 2010 Yes, 688 No
+table(edu.df$studyAbroad) # 1582 Yes, 1116 No
+table(edu.df$weekend) # 1366 No, 1332 Yes
+table(edu.df$remedial) # 1874 Yes, 824 No
+table(edu.df$counseling) # 2651 Yes, 47 No
 
-table(stem.df$instateTuition) # numerical, 42 missing values***
-# replace N/A values in the 'instateTuition' column with the median 
-median(stem.df$instateTuition, na.rm=TRUE) # 15300
-stem.df$instateTuition[is.na(stem.df$instateTuition)] <- 15300
-colSums(is.na(stem.df))
+table(edu.df$employment) # 2297 Yes, 401 No
+table(edu.df$placement) # 2139 Yes, 559 No
+# combine employment and placement services into a single variable
+edu.df$placeEmploy <- with(edu.df, ifelse(employment=="Yes" | placement=="Yes", "Yes", "No"))
+edu.df$employment <- NULL
+edu.df$placement <- NULL # 27 variables
+table(edu.df$placeEmploy) # 2386 Yes, 312 No
 
-table(stem.df$outstateTuition) # numerical, 42 few missing values***
-# replace N/A values in the 'outstateTuition' column with the median 
-median(stem.df$outstateTuition, na.rm=TRUE) # 17748
-stem.df$outstateTuition[is.na(stem.df$outstateTuition)] <- 17748
-colSums(is.na(stem.df))
+table(edu.df$dayCare) # 2225 No, 473 Yes
 
-table(stem.df$size) # 5 levels, 1 Not reported***
-# replace 'Not reported' value in the 'size' column with the mode
-mode <- function(n) {
-   uniq <- unique(n)
-   uniq[which.max(tabulate(match(n, uniq)))]
-}
-mode(stem.df$size) # "Under 1,000"
-stem.df$size[stem.df$size=="Not reported"] <- "Under 1,000"
-table(stem.df$size)
-
-table(stem.df$facultyRatio) # numerical, 11 missing values***
-# engineer a new independent variable to rank size by levels
-stem.df$sizeLevel <- with(stem.df, ifelse(size=="Under 1,000", 1, ifelse(size=="1,000 - 4,999", 2, ifelse(size=="5,000 - 9,999", 3, ifelse(size=="10,000 - 19,999", 4, 5)))))
-# calculate all numerical variable correlations for faculty ratio
-cor(stem.df[, "facultyRatio"], stem.df[, sapply(stem.df, is.numeric)], use="complete.obs")
-# there are no strong correlations, so use the median instead
-median(stem.df$facultyRatio, na.rm=TRUE) # 13
-stem.df$facultyRatio[is.na(stem.df$facultyRatio)] <- 13
-colSums(is.na(stem.df))
-
-table(stem.df$grantAid) # numerical, 25 missing values***
-# calculate all numerical variable correlations for grant aid
-cor(stem.df[, "grantAid"], stem.df[, sapply(stem.df, is.numeric)], use="complete.obs")
-# there is a correlation of 86% between grant aid and in-state tuition
-# examine the spread of in-state tuition
-qts <- quantile(stem.df$instateTuition) # 0, 8850, 15300, 25587, 55944
-# calculate median tuition for each tuition quartile
-tapply(stem.df$instateTuition, findInterval(stem.df$instateTuition, qts), median) # 5681, 11800, 17748, 33678
-# examine the spread of grant aid
-qns <- quantile(stem.df$grantAid, na.rm=TRUE) # 609, 4780.75, 7163, 14467.5, 44724
-# calculate the median aid for each grant aid quartile
-tapply(stem.df$grantAid, findInterval(stem.df$grantAid, qns), median) # 3941, 5825, 9612, 19917.5
-# impute the missing grant aid values
-grantNA.df <- stem.df[is.na(stem.df$grantAid),]
-for(i in 1:nrow(grantNA.df)){
-  if(grantNA.df$instateTuition[i] <= 8850) {
-    grantNA.df$grantAid[i] <- (3941/5681*grantNA.df$instateTuition[i]) } 
-  else if(grantNA.df$instateTuition[i] <= 15300) {
-    grantNA.df$grantAid[i] <- (5825/11800*grantNA.df$instateTuition[i]) }
-  else if(grantNA.df$instateTuition[i] <= 25587) {
-    grantNA.df$grantAid[i] <- (9612/17748*grantNA.df$instateTuition[i]) }
-  else { grantNA.df$grantAid[i] <-   (19917.5/33678*grantNA.df$instateTuition[i]) }
-}
-table(grantNA.df$grantAid) 
-if(row.names(stem.df) %in% row.names(grantNA.df)) {
-  # update values in stem.df$grantAid column using grantNA.df$grantAid
-}
-colSums(is.na(stem.df))
-
-table(stem.df$loanAid) # numerical, no missing values
-```
-
-
-### Feature engineer some new independent variables
-```{r feature engineer some new independent variables}
-# combine employment and placement services
-stem.df$placeEmploy <- with(stem.df, ifelse(employment=="Yes"|placement=="Yes", "Yes", "No"))
-
+table(edu.df$tuitionGuarantee) # 2529 No, 169 Yes
+table(edu.df$tuitionPrepaid) # 2438 No, 260 Yes
+table(edu.df$tuitionPlan) # 2257 Yes, 441 No
 # combine tuition guarantee, prepaid tuition, and tuition payment plan
-stem.df$tuitionOptions <- with(stem.df, ifelse(tuitionGuarantee=="Yes"|tuitionPlan=="Yes"|tuitionPrepaid=="Yes", "Yes", "No"))
+edu.df$tuitionOptions <- with(edu.df, ifelse(tuitionGuarantee=="Yes" | tuitionPlan=="Yes" | tuitionPrepaid=="Yes", "Yes", "No"))
+edu.df$tuitionGuarantee <- NULL
+edu.df$tuitionPrepaid <- NULL
+edu.df$tuitionPlan <- NULL # 25 variables
+table(edu.df$tuitionOptions) # 2297 Yes, 401 No
 
-# calculate the ratio of out-of-state to in-state tuition
-stem.df$tuitionRatio <- stem.df$outstateTuition/stem.df$instateTuition
+table(edu.df$oncampusHousing) # 1763 Yes, 935 No
+
+table(edu.df$mealPlan) # 1620 Yes (2 levels), 1078 No
+# combine the two 'Yes' levels into one level
+edu.df$mealPlan <- with(edu.df, ifelse(mealPlan=="Yes, number of meals in the maximum meal plan offered" | mealPlan=="Yes, number of meals per week can vary", "Yes", "No"))
+table(edu.df$mealPlan) # 1620 Yes, 1078 No
+
+# table(edu.df$instateTuition) # numerical, 40 missing values
+# examine the average and spread of in-state tuition
+mean(edu.df$instateTuition, na.rm=TRUE) # 18117
+quantile(edu.df$instateTuition, na.rm=TRUE) # 0, 8732, 15300, 25868, 55944
+# replace N/A values in the 'instateTuition' column with the mean
+edu.df$instateTuition[is.na(edu.df$instateTuition)] <- 18117
+colSums(is.na(edu.df))
+
+# table(edu.df$outstateTuition) # numerical, 40 missing values
+# calculate all numerical variable correlations for tuition
+cor(edu.df[, "outstateTuition"], edu.df[, sapply(edu.df, is.numeric)], use="complete.obs")
+# there is a 90% correlation between out-of-state and in-state tuition
+# remove out-of-state tuition from the analysis
+edu.df$outstateTuition <- NULL # 24 variables
+
+table(edu.df$size) # 5 levels, categorical variable
+# replace levels with shorter, ordered names
+edu.df$size <- with(edu.df, ifelse(size=="Under 1,000", "<1,000", ifelse(size=="1,000 - 4,999", "1-4,999", ifelse(size=="5,000 - 9,999", "5-9,999", ifelse(size=="10,000 - 19,999", "10-19,999", "20,000+")))))
+edu.df$size <- ordered(edu.df$size, levels=c("<1,000", "1-4,999", "5-9,999", "10-19,999", "20,000+"))
+table(edu.df$size)
+
+# table(edu.df$facultyRatio) # numerical, 0 missing values
+
+# table(edu.df$grantAid) # numerical, 18 missing values
+# calculate all numerical variable correlations for grant aid
+cor(edu.df[, "grantAid"], edu.df[, sapply(edu.df, is.numeric)], use="complete.obs")
+# there is a correlation of 82% between grant aid and in-state tuition
+# create a linear regression model to predict grant aid
+grant.mod <- lm(grantAid ~ instateTuition, data=edu.df)
+summary(grant.mod)
+# use the model to impute missing values
+grant.na <- edu.df[is.na(edu.df$grantAid),]
+grant.vals <- data.frame(predict(grant.mod, newdata=grant.na))
+colnames(grant.vals) <- "grantAid"
+for(n in row.names(grant.vals)) {
+  edu.df[n,"grantAid"] <- grant.vals[n,"grantAid"]
+}
+colSums(is.na(edu.df))
+
+# table(edu.df$loanAid) # numerical, 127 missing values
+# calculate all numerical variable correlations for loan aid
+cor(edu.df[, "loanAid"], edu.df[, sapply(edu.df, is.numeric)], use="complete.obs") # there are no strong correlations
+# examine the average and spread of loan aid
+mean(edu.df$loanAid, na.rm=TRUE) # 7436
+quantile(edu.df$loanAid, na.rm=TRUE) # 1060 6631 7306 8280 14400
+# replace N/A values in the 'loanAid' column with the mean
+edu.df$loanAid[is.na(edu.df$loanAid)] <- 7436
+colSums(is.na(edu.df)) # no missing values :) 
 ```
+
+### Write the data to a new csv file
+```{r write the data to a new csv file}
+write.csv(edu.df, file = "project-data.csv", row.names=FALSE)
+```
+
+### Data wrangling summary
+
+I began with a cursory examination of the data. I next created a new data frame containing only the variables that I plan to use in my analysis and renamed them with shorter names that will be easier to use in my code. I only wish to examine data from institutions that are actively granting Bachelor's degrees, so I eliminated the data from any institutions that did not meet these criteria. I also decided to combine the enrollment numbers for African American and Hispanic/Latino students into one variable to use as my target variable. 
+
+I next conducted a more in-depth examination of my selected data set to determine missing value imputation methods and feature engineer some new independent variables. I first removed all rows that did not contain any data for my target variable, and then examined the remaining data for additional missing values. I found that four of my independent variables still contained missing values: instateTuition (40 missing), outstateTuition (40 missing), grantAid (18 missing), and loanAid (127 missing).
+
+I found a very high (90%) correlation between in-state and out-of-state tuition, so I removed out-of-state tuition from the data set and replaced the missing values for in-state tuition with the mean value for in-state tuition. I also noticed a strong (82%) correlation between grant aid and in-state tuition, and I decided to create a linear regression model to predict grant aid based on in-state tuition. I then used the model to impute new values and replaced the missing values with the imputed ones. I did not find any strong correlations for loan aid and replaced the missing values with the mean value.
+
+I noticed that the region, urban, and size variable level names were quite long, so I shortened them to work better in the data visualizations, and ordered the size and urban levels in ascending order by size and degree of urbanization, respectively. I replaced the 'not applicable' values of the open enrollment variable with 'no' values, since this did imply that open enrollment was not in play. 
+
+I combined the availability of employment services and the availability of placement services into a single variable, since these services are very similar in nature. I also combined tuition guarantee, tuition prepaid, and tuition plan into a single variable to indicate the availability of some type of special tuition payment option.
