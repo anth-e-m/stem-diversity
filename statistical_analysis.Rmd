@@ -1,0 +1,193 @@
+---
+title: "Statistical Analysis"
+author: "Erin Anthony"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Include the ggplot2 library
+```{r include the ggplot2 library}
+library(ggplot2)
+# multivariate regression, decision trees, NOT logistic regression
+```
+
+### Visualize minority enrollment by region
+```{r visualize minority enrollment by region}
+boxplot(minorityEnroll~region, data=edu.df, main="Minority Enrollment by Region", xlab="Region", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by hbcu
+```{r visualize minority enrollment by hbcu}
+boxplot(minorityEnroll~hbcu, data=edu.df, main="Minority Enrollment by HBCU", xlab="HBCU", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by tribal college
+```{r visualize minority enrollment by tribal college}
+boxplot(minorityEnroll~tribal, data=edu.df, main="Minority Enrollment by Tribal College", xlab="Tribal College", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by urbanization
+```{r visualize minority enrollment by urbanization}
+urban.table <- table(edu.df$urban)
+urban.levels <- names(urban.table)
+edu.df$urban <- factor(edu.df$urban, levels = urban.levels)
+ggplot(edu.df, aes(x = urban, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Degree of Urbanization") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Degree of Urbanization") + 
+  ylab("Minority Enrollment")
+```
+
+### Visualize minority enrollment by open enrollment
+```{r visualize minority enrollment by open enrollment}
+boxplot(minorityEnroll~open, data=edu.df, main="Minority Enrollment by Open Enrollment", xlab="Open Enrollment", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by land grant institution
+```{r visualize minority enrollment by land grant institution}
+boxplot(minorityEnroll~landGrant, data=edu.df, main="Minority Enrollment by Land Grant Institution", xlab="Land Grant Institution", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by associate\'s degree offering
+```{r visualize minority enrollment by associate\'s degree offering}
+boxplot(minorityEnroll~associates, data=edu.df, main="Minority Enrollment by Associate\'s Degree Offering", xlab="Associate\'s Degree Offering", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by distance-only program
+```{r visualize minority enrollment by distance-only program}
+boxplot(minorityEnroll~allDistance, data=edu.df, main="Minority Enrollment by Distance-Only Program", xlab="Distance-Only Program", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by distance options available
+```{r visualize minority enrollment by distance options available}
+boxplot(minorityEnroll~partDistance, data=edu.df, main="Minority Enrollment by Distance Options Available", xlab="Distance Options Available", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by study abroad available
+```{r visualize minority enrollment by study abroad available}
+boxplot(minorityEnroll~studyAbroad, data=edu.df, main="Minority Enrollment by Study Abroad Available", xlab="Study Abroad Available", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by weekend course offerings
+```{r visualize minority enrollment by weekend course offerings}
+boxplot(minorityEnroll~weekend, data=edu.df, main="Minority Enrollment by Weekend Course Offerings", xlab="Weekend Course Offerings", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by remedial course offerings
+```{r visualize minority enrollment by remedial course offerings}
+boxplot(minorityEnroll~remedial, data=edu.df, main="Minority Enrollment by Remedial Course Offerings", xlab="Remedial Course Offerings", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by access to counseling
+```{r visualize minority enrollment by access to counseling}
+boxplot(minorityEnroll~counseling, data=edu.df, main="Minority Enrollment by Access to Counseling", xlab="Access to Counseling", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by access to day care
+```{r visualize minority enrollment by access to day care}
+boxplot(minorityEnroll~dayCare, data=edu.df, main="Minority Enrollment by Access to Day Care", xlab="Access to Day Care", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by availability of on-campus housing
+```{r visualize minority enrollment by availability of on-campus housing}
+boxplot(minorityEnroll~oncampusHousing, data=edu.df, main="Minority Enrollment by Availability of On-Campus Housing", xlab="Availability of On-Campus Housing", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by availability of a meal plan
+```{r visualize minority enrollment by availability of a meal plan}
+boxplot(minorityEnroll~mealPlan, data=edu.df, main="Minority Enrollment by Availability of a Meal Plan", xlab="Availability of a Meal Plan", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by access to employment or placement services
+```{r visualize minority enrollment by access to employment or placement services}
+boxplot(minorityEnroll~placeEmploy, data=edu.df, main="Minority Enrollment by Access to Employment or Placement Services", xlab="Access to Employment or Placement Services", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by availability of tuition options
+```{r visualize minority enrollment by availability of tuition options}
+boxplot(minorityEnroll~tuitionOptions, data=edu.df, main="Minority Enrollment by Availability of Tuition Options", xlab="Availability of Tuition Options", ylab="Minority Enrollment")
+```
+
+### Visualize minority enrollment by size of institution
+```{r visualize minority enrollment by size of institution}
+size.table <- table(edu.df$size)
+size.levels <- names(size.table)
+edu.df$size <- factor(edu.df$size, levels = size.levels)
+ggplot(edu.df, aes(x = size, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Size of Institution") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Size of Institution") + 
+  ylab("Minority Enrollment")
+```
+
+### Visualize minority enrollment by cost of in-state tuition
+```{r visualize minority enrollment by cost of in-state tuition}
+ggplot(aes(x = instateTuition, y = minorityEnroll), data = edu.df) + 
+  geom_point(alpha = 0.25, color = 'purple') +
+  geom_smooth(method = 'lm', color = 'blue') +
+  ggtitle("Minority Enrollment by Cost of In-State Tuition") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Cost of In-State Tuition") + 
+  ylab("Minority Enrollment")
+```
+
+### Visualize minority enrollment by student-faculty ratio
+```{r visualize minority enrollment by student-faculty ratio}
+ggplot(aes(x = facultyRatio, y = minorityEnroll), data = edu.df) + 
+  geom_point(alpha = 0.25, color = 'purple', position = 'jitter') +
+  geom_smooth(method = 'lm', color = 'blue') +
+  ggtitle("Minority Enrollment by Student-Faculty Ratio") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Student-Faculty Ratio") + 
+  ylab("Minority Enrollment")
+```
+
+### Visualize minority enrollment by average grant aid awarded
+```{r visualize minority enrollment by average grant aid awarded}
+ggplot(aes(x = grantAid, y = minorityEnroll), data = edu.df) + 
+  geom_point(alpha = 0.25, color = 'purple') +
+  geom_smooth(method = 'lm', color = 'blue') +
+  ggtitle("Minority Enrollment by Average Grant Aid Awarded") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Average Grant Aid Awarded") + 
+  ylab("Minority Enrollment")
+```
+
+### Visualize minority enrollment by average loan aid awarded
+```{r visualize minority enrollment by average loan aid awarded}
+ggplot(aes(x = loanAid, y = minorityEnroll), data = edu.df) + 
+  geom_point(alpha = 0.25, color = 'purple') +
+  geom_smooth(method = 'lm', color = 'blue') +
+  ggtitle("Minority Enrollment by Average Loan Aid Awarded") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Average Loan Aid Awarded") + 
+  ylab("Minority Enrollment")
+```
+
+### Visualize minority enrollment by both grant aid and tuition cost
+```{r visualize minority enrollment by both grant aid and tuition cost}
+ggplot(aes(x = grantAid, y = minorityEnroll, color = instateTuition), data = edu.df) + 
+  geom_point(alpha = 0.75) +
+  scale_color_gradient(low='pink', high='blue') +
+  geom_smooth(method = 'lm', color = 'blue') +
+  ggtitle("Minority Enrollment by Grant Aid and Tuition Cost") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Average Grant Aid Awarded") + 
+  ylab("Minority Enrollment") +
+  labs(colour = "In-State Tuition") 
+```
+
+### Statistical analysis summary
+
+I created a series of box plots to visualize the relationship between each categorical variable and the target variable. It appears that institutions located in the southeast and southwest regions of the United States might have significantly higher minority enrollments. Historically black colleges and universities have much higher minority enrollments as expected, though minority enrollments (as defined as enrollments of black and latino students) appear lower at tribal colleges. There appears to be a possible trend of increasing minority enrollments along with an increasing degree of urbanization of institution location. Institutions with open enrollment appear to enroll more minority students. 
+
+A possible explanation for some of these effects may be the demographics of where minority students tend to be born and raised prior to attending a college or university. For example, if a higher proportion of the population in the souteastern and southwestern United States is of African-American and Hispanic/Latino ethnicity, and a high proportion of students attend school within their geographic area of origin, this could explain why miniority enrollments are higher in these areas. Similarly, if more urban locations tend to have higher minority populations, this could help account for the higher miniority enrollments at urban institutions. It also makes sense that schools with open enrollment might tend to have a higher proportion of minority students. Minority students may be more likely to have grown up in less affluent neighborhoods with a lower quality of primary education. It has also been indicated in some educational research studies that minority students tend to perform worse on standardized tests such as the SAT and ACT, which are typically used in selective admissions.
+
+I also created a series of scatter plots to visualize the relationship between each numerical variable and the target variable. There appears to be a possible trend for minority enrollments to decline as the cost of tuition increases. This makes sense, as high cost is likely to be a barrier for minority students with limited financial means. There also appears to be a possible trend for minority enrollments to decrease as grant aid increases, which would seem rather counterintuitive if there were not a strong correlation between increased grant aid and increased cost of tuition. An additional scatterplot visualizing the relationship between grant aid, in-state tuition, and minority enrollments clearly confirms the strong relationship between increased grant aid and increased tuition cost.
+
+There also appears to be some possible effects of the other independent variables on minority enrollments, but it is less clear which if any are significant based on just the plots. Some of the independent variables will undoubtedly be removed from the final model. Grant aid is definitely one good candidate for removal, due to its high correlation with in-state tuition and the fact that from a logical perspective, increasing tuition should tend to drive down enrollment numbers but increasing grant aid should not be a barrier in and of itself.
