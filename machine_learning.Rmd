@@ -1,0 +1,17 @@
+---
+title: "Machine Learning"
+author: "Erin Anthony"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Machine learning summary
+
+The machine learning problem that I am exploring in this analysis is how to predict the percentage of minority enrollments at an institution of higher education using various institutional characteristics as the predictor variables. This is a supervised problem, because both predictor and target variable values are available in the data set and an algorithm will be created to map the input variables onto the output variables. This is also a regression problem, because the dependent variables are continuous, numerical variables.
+
+The independent variables that will be used in the initial model are location region, HBCU status, tribal college status, degree of location urbanization, open enrollment status, land grant status, Associate's degree offering, all-distance courses, some distance courses, study abroad offering, weekend courses, remedial courses, counseling access, day care access, on-campus housing, meal plan offering, cost of in-state tuition, size, student-faculty ratio, average grant aid, averag loan aid, employment/placement services, and access to tuition payment options. The dependent variable is the percentage of minority enrollment (as defined as African-American and Hispanic/Latino enrollment) at the institution. 
+
+The machine learning techniques used to build a model will be multivariate linear regression and a decision tree (one different model built using each method). The adjusted R-squared value will be used to select the best final variables for the linear regression model, and the root mean squared error (RMSE) and percentage of accurate predictions will be used to determine the degree of success of the model fit. For the decision tree model, the percentage of accurate predictions will be calculated to determine the model accuracy. 
