@@ -11,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Include the ggplot2 library
 ```{r include the ggplot2 library}
 library(ggplot2)
-# multivariate regression, decision trees, NOT logistic regression
 ```
 
 ### Visualize minority enrollment by region

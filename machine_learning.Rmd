@@ -14,4 +14,102 @@ The machine learning problem that I am exploring in this analysis is how to pred
 
 The independent variables that will be used in the initial model are location region, HBCU status, tribal college status, degree of location urbanization, open enrollment status, land grant status, Associate's degree offering, all-distance courses, some distance courses, study abroad offering, weekend courses, remedial courses, counseling access, day care access, on-campus housing, meal plan offering, cost of in-state tuition, size, student-faculty ratio, average grant aid, averag loan aid, employment/placement services, and access to tuition payment options. The dependent variable is the percentage of minority enrollment (as defined as African-American and Hispanic/Latino enrollment) at the institution. 
 
-The machine learning techniques used to build a model will be multivariate linear regression and a decision tree (one different model built using each method). The adjusted R-squared value will be used to select the best final variables for the linear regression model, and the root mean squared error (RMSE) and percentage of accurate predictions will be used to determine the degree of success of the model fit. For the decision tree model, the percentage of accurate predictions will be calculated to determine the model accuracy. 
+The machine learning techniques used to build a model will be multivariate linear regression and a decision tree (one different model built using each method). The adjusted R-squared value will be used to select the best final variables for the linear regression model, and the root mean squared error (RMSE) will be used to determine the degree of success of the model fit. For the decision tree model, the percentage of accurate predictions will be calculated to determine the model accuracy. 
+
+### Create a linear regression model using all variables
+```{r create a linear regression model using all variables}
+lm.1 = lm(minorityEnroll ~ ., data=edu.df)
+summary(lm.1) # adjusted R-squared: .5037
+SSE.1 = sum(lm.1$residuals^2) # 709,078
+```
+
+### Remove insignificant variables incrementally
+```{r remove insignificant variables incrementally}
+# remove counseling services
+lm.2 = lm(minorityEnroll ~ region + hbcu + tribal + urban + open + landGrant + associates + allDistance + partDistance + studyAbroad + weekend + remedial + dayCare + oncampusHousing + mealPlan + instateTuition + size + facultyRatio + grantAid + loanAid + placeEmploy + tuitionOptions, data=edu.df)
+summary(lm.2) # adjusted R-squared: .5039
+SSE.2 = sum(lm.2$residuals^2) # 709,122
+
+# remove part distance education offering
+lm.3 = lm(minorityEnroll ~ region + hbcu + tribal + urban + open + landGrant + associates + allDistance + studyAbroad + weekend + remedial + dayCare + oncampusHousing + mealPlan + instateTuition + size + facultyRatio + grantAid + loanAid + placeEmploy + tuitionOptions, data=edu.df)
+summary(lm.3) # adjusted R-squared: .504
+SSE.3 = sum(lm.3$residuals^2) # 709,167
+
+# remove average grant aid
+lm.4 = lm(minorityEnroll ~ region + hbcu + tribal + urban + open + landGrant + associates + allDistance + studyAbroad + weekend + remedial + dayCare + oncampusHousing + mealPlan + instateTuition + size + facultyRatio + loanAid + placeEmploy + tuitionOptions, data=edu.df)
+summary(lm.4) # adjusted R-squared: .5042
+SSE.4 = sum(lm.4$residuals^2) # 709,206
+
+# remove study abroad offering
+lm.5 = lm(minorityEnroll ~ region + hbcu + tribal + urban + open + landGrant + associates + allDistance + weekend + remedial + dayCare + oncampusHousing + mealPlan + instateTuition + size + facultyRatio + loanAid + placeEmploy + tuitionOptions, data=edu.df)
+summary(lm.5) # adjusted R-squared: .5043
+SSE.5 = sum(lm.5$residuals^2) # 709,300
+
+# remove all-distance education programs
+lm.6 = lm(minorityEnroll ~ region + hbcu + tribal + urban + open + landGrant + associates + weekend + remedial + dayCare + oncampusHousing + mealPlan + instateTuition + size + facultyRatio + loanAid + placeEmploy + tuitionOptions, data=edu.df)
+summary(lm.6) # adjusted R-squared: .5044
+SSE.6 = sum(lm.6$residuals^2) # 709,435
+
+# remove institution size
+lm.7 = lm(minorityEnroll ~ region + hbcu + tribal + urban + open + landGrant + associates + weekend + remedial + dayCare + oncampusHousing + mealPlan + instateTuition + facultyRatio + loanAid + placeEmploy + tuitionOptions, data=edu.df)
+summary(lm.7) # adjusted R-squared: .504
+SSE.7 = sum(lm.7$residuals^2) # 711,115
+# this did not improve the accuracy of the model
+
+# re-include institution size, remove day care services
+lm.8 = lm(minorityEnroll ~ region + hbcu + tribal + urban + open + landGrant + associates + weekend + remedial + oncampusHousing + mealPlan + instateTuition + size + facultyRatio + loanAid + placeEmploy + tuitionOptions, data=edu.df)
+summary(lm.8) # adjusted R-squared: .5041
+SSE.8 = sum(lm.8$residuals^2) # 710,136
+# this did not improve the accuracy of the model
+
+# calculate the root mean squared error (RMSE) for the best model - #6
+MSE.6 = SSE.6 / length(lm.6$residuals) # 263
+RMSE.6 = sqrt(MSE.6) # 16
+```
+
+### Machine learning summary continued - evaluation of linear regression model
+
+Of the eight linear regression models created, model #6 performed the best in regard to having the highest adjusted R-squared value (.5044), although none of the variable adjustments amongst the models had much of an impact on this value. The final independent variables used in the selected model are region, HBCU, tribal college, degree of urbanization, open enrollment, land grant status, associates degree offerings, weekend classes, remedial classes, day care services, on-campus housing, meal plans, cost of in-state tuition, size, student-faculty ratio, average loan aid, placement/employment services, and the availability of tuition payment options.
+
+The linear regression model does seem to have some predictive ability, though not as much as would be ideal. Next a decision tree model will be created to determine if this type of model will perform better with the data.
+
+### Create a decision tree model using all variables
+```{r create a decision tree model using all variables}
+library(caTools)
+set.seed(1000)
+
+# split the data into a training set and a testing set
+split = sample.split(edu.df$minorityEnroll, SplitRatio = 0.7)
+train = subset(edu.df, split == TRUE)
+test = subset(edu.df, split == FALSE)
+
+install.packages("rpart")
+library(rpart)
+install.packages("rpart.plot")
+library(rpart.plot)
+
+# create and view the decision tree
+decTree = rpart(minorityEnroll ~ ., data=train, method="anova", control=rpart.control(minbucket=25))
+prp(decTree)
+
+# 7 variables used in the tree: hbcu, mealPlan, region, urban, instateTuition, remedial, associates
+
+# check the error rates to see if any split pruning is needed
+cpTable = printcp(decTree) 
+# 10 splits has the minimum error rate, so no pruning required
+rsq.val <- 1 - cpTable[10,3] # R-squared value for 10 splits: .5018
+
+# examine the tree
+plotcp(decTree)
+summary(decTree)
+par(mfrow=c(1,2)) # two plots on one page
+rsq.rpart(decTree) # visualize cross-validation results 
+
+prediction = predict(decTree, newdata=test)
+```
+
+### Machine learning summary continued - evaluation of decision tree model
+
+A decision tree with 10 splits had the lowest error rate. The R-squared value for this tree is .5018, which is almost exactly equivalent to the R-squared value for the most successful linear regression model (but just slightly worse). The final independent variables used in the decision tree model are region, HBCU, degree of urbanization, associates degree offerings, remedial classes, meal plans, cost of in-state tuition. 
+
+This model uses several fewer variables than the linear regression model, with only a very tiny reduction in accuracy. This may be of great help in narrowing down which factors truly have the strongest effect on the target variable.
