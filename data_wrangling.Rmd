@@ -88,16 +88,21 @@ edu.df$latinoEnroll <- NULL # 28 variables
 # remove rows where data is missing from the dependent variable column
 edu.df <- edu.df[!is.na(edu.df$minorityEnroll),] # 2698 obs of 28 var
 
+# remove outliers from the minority enrollment data (top/bottom 2.5%)
+quantile(edu.df$minorityEnroll, 0.975) # 91%
+quantile(edu.df$minorityEnroll, 0.025) # 0%
+edu.df <- edu.df[edu.df$minorityEnroll < quantile(edu.df$minorityEnroll, 0.975), ] # 2629 obs of 28 variables
+
 # find columns that still contain missing values
-colSums(is.na(edu.df)) # instateTuition (40), outstateTuition (40), grantAid (18), loanAid (127)
+colSums(is.na(edu.df)) # instateTuition (39), outstateTuition (39), grantAid (17), loanAid (123)
 
 table(edu.df$region) # 9 levels, categorical variable
 # replace levels with shorter name codes
 edu.df$region <- with(edu.df, ifelse(region=="Far West AK CA HI NV OR WA", "FW", ifelse(region=="Great Lakes IL IN MI OH WI", "GL", ifelse(region=="Mid East DE DC MD NJ NY PA", "ME", ifelse(region=="New England CT ME MA NH RI VT", "NE", ifelse(region=="Plains IA KS MN MO NE ND SD", "PL", ifelse(region=="Rocky Mountains CO ID MT UT WY", "RM", ifelse(region=="Southeast AL AR FL GA KY LA MS NC SC TN VA WV", "SE", ifelse(region=="Southwest AZ NM OK TX", "SW", "US")))))))))
 table(edu.df$region)
 
-table(edu.df$hbcu) # 2612 No, 86 Yes
-table(edu.df$tribal) # 2685 No, 13 Yes
+table(edu.df$hbcu) # 2586 No, 43 Yes
+table(edu.df$tribal) # 2616 No, 13 Yes
 
 table(edu.df$urban) # 12 levels, categorical variable
 # replace levels with shorter, ordered names
@@ -105,63 +110,68 @@ edu.df$urban <- with(edu.df, ifelse(urban=="City: Large", "City:L", ifelse(urban
 edu.df$urban <- ordered(edu.df$urban, levels = c("Rural:R", "Rural:D", "Rural:F", "Town:R", "Town:D", "Town:F", "Suburb:S", "Suburb:M", "Suburb:L", "City:S", "City:M", "City:L"))
 table(edu.df$urban)
 
-table(edu.df$open) # 1870 No, 697 Yes, 131 Not applicable
+table(edu.df$open) # 1836 No, 663 Yes, 130 Not applicable
 # replace 'N/A' values in the 'open' column with 'No' values
 edu.df$open[edu.df$open=="Not applicable"] <- "No"
-table(edu.df$open) # 2001 No, 697 Yes
+table(edu.df$open) # 1966 No, 663 Yes
 
-table(edu.df$landGrant) # 2614 Not a Land Grant, 84 Land Grant
+table(edu.df$landGrant) # 2552 Not a Land Grant, 77 Land Grant
 # replace levels with No and Yes
 edu.df$landGrant <- with(edu.df, ifelse(landGrant=="Land Grant Institution", "Yes", "No"))
 table(edu.df$landGrant)
 
-table(edu.df$associates) # 1189 No, 1509 Yes
-table(edu.df$allDistance) # 2659 No, 39 Yes
-table(edu.df$partDistance) # 2010 Yes, 688 No
-table(edu.df$studyAbroad) # 1582 Yes, 1116 No
-table(edu.df$weekend) # 1366 No, 1332 Yes
-table(edu.df$remedial) # 1874 Yes, 824 No
-table(edu.df$counseling) # 2651 Yes, 47 No
+table(edu.df$associates) # 1157 No, 1472 Yes
+table(edu.df$allDistance) # 2590 No, 39 Yes
+table(edu.df$partDistance) # 1972 Yes, 657 No
+table(edu.df$studyAbroad) # 1543 Yes, 1086 No
+table(edu.df$weekend) # 1343 No, 1286 Yes
+table(edu.df$remedial) # 1818 Yes, 811 No
+table(edu.df$counseling) # 2583 Yes, 46 No
 
-table(edu.df$employment) # 2297 Yes, 401 No
-table(edu.df$placement) # 2139 Yes, 559 No
+table(edu.df$employment) # 2245 Yes, 384 No
+table(edu.df$placement) # 2083 Yes, 546 No
 # combine employment and placement services into a single variable
 edu.df$placeEmploy <- with(edu.df, ifelse(employment=="Yes" | placement=="Yes", "Yes", "No"))
 edu.df$employment <- NULL
 edu.df$placement <- NULL # 27 variables
-table(edu.df$placeEmploy) # 2386 Yes, 312 No
+table(edu.df$placeEmploy) # 2326 Yes, 303 No
 
-table(edu.df$dayCare) # 2225 No, 473 Yes
+table(edu.df$dayCare) # 2167 No, 462 Yes
 
-table(edu.df$tuitionGuarantee) # 2529 No, 169 Yes
-table(edu.df$tuitionPrepaid) # 2438 No, 260 Yes
-table(edu.df$tuitionPlan) # 2257 Yes, 441 No
+table(edu.df$tuitionGuarantee) # 2467 No, 162 Yes
+table(edu.df$tuitionPrepaid) # 2371 No, 258 Yes
+table(edu.df$tuitionPlan) # 2195 Yes, 434 No
 # combine tuition guarantee, prepaid tuition, and tuition payment plan
 edu.df$tuitionOptions <- with(edu.df, ifelse(tuitionGuarantee=="Yes" | tuitionPlan=="Yes" | tuitionPrepaid=="Yes", "Yes", "No"))
 edu.df$tuitionGuarantee <- NULL
 edu.df$tuitionPrepaid <- NULL
 edu.df$tuitionPlan <- NULL # 25 variables
-table(edu.df$tuitionOptions) # 2297 Yes, 401 No
+table(edu.df$tuitionOptions) # 2234 Yes, 395 No
 
-table(edu.df$oncampusHousing) # 1763 Yes, 935 No
+table(edu.df$oncampusHousing) # 1717 Yes, 912 No
 
-table(edu.df$mealPlan) # 1620 Yes (2 levels), 1078 No
+table(edu.df$mealPlan) # 1574 Yes (2 levels), 1055 No
 # combine the two 'Yes' levels into one level
 edu.df$mealPlan <- with(edu.df, ifelse(mealPlan=="Yes, number of meals in the maximum meal plan offered" | mealPlan=="Yes, number of meals per week can vary", "Yes", "No"))
-table(edu.df$mealPlan) # 1620 Yes, 1078 No
+table(edu.df$mealPlan) # 1574 Yes, 1055 No
 
-# table(edu.df$instateTuition) # numerical, 40 missing values
+# table(edu.df$instateTuition) # numerical, 39 missing values
 # examine the average and spread of in-state tuition
-mean(edu.df$instateTuition, na.rm=TRUE) # 18117
-quantile(edu.df$instateTuition, na.rm=TRUE) # 0, 8732, 15300, 25868, 55944
+mean(edu.df$instateTuition, na.rm=TRUE) # 18335
+quantile(edu.df$instateTuition, na.rm=TRUE) # 0, 8953, 15568, 26240, 55944
 # replace N/A values in the 'instateTuition' column with the mean
-edu.df$instateTuition[is.na(edu.df$instateTuition)] <- 18117
+edu.df$instateTuition[is.na(edu.df$instateTuition)] <- 18335
 colSums(is.na(edu.df))
 
-# table(edu.df$outstateTuition) # numerical, 40 missing values
+# remove outliers from the in-state tuition data (top/bottom 2.5%)
+quantile(edu.df$instateTuition, 0.975) # 47150
+quantile(edu.df$instateTuition, 0.025) # 2849
+edu.df <- edu.df[edu.df$instateTuition < quantile(edu.df$instateTuition, 0.975) & edu.df$instateTuition > quantile(edu.df$instateTuition, 0.025), ] # 2497 obs of 25 variables
+
+# table(edu.df$outstateTuition) # numerical, 39 missing values
 # calculate all numerical variable correlations for tuition
 cor(edu.df[, "outstateTuition"], edu.df[, sapply(edu.df, is.numeric)], use="complete.obs")
-# there is a 90% correlation between out-of-state and in-state tuition
+# there is an 87% correlation between out-of-state and in-state tuition
 # remove out-of-state tuition from the analysis
 edu.df$outstateTuition <- NULL # 24 variables
 
@@ -172,11 +182,15 @@ edu.df$size <- ordered(edu.df$size, levels=c("<1,000", "1-4,999", "5-9,999", "10
 table(edu.df$size)
 
 # table(edu.df$facultyRatio) # numerical, 0 missing values
+# remove outliers from the student-faculty ratio data (top/bottom 2.5%)
+quantile(edu.df$facultyRatio, 0.975) # 26%
+quantile(edu.df$facultyRatio, 0.025) # 5%
+edu.df <- edu.df[edu.df$facultyRatio < quantile(edu.df$facultyRatio, 0.975) & edu.df$facultyRatio > quantile(edu.df$facultyRatio, 0.025), ] # 2338 obs of 24 variables
 
-# table(edu.df$grantAid) # numerical, 18 missing values
+# table(edu.df$grantAid) # numerical, 17 missing values
 # calculate all numerical variable correlations for grant aid
 cor(edu.df[, "grantAid"], edu.df[, sapply(edu.df, is.numeric)], use="complete.obs")
-# there is a correlation of 82% between grant aid and in-state tuition
+# there is a correlation of 80% between grant aid and in-state tuition
 # create a linear regression model to predict grant aid
 grant.mod <- lm(grantAid ~ instateTuition, data=edu.df)
 summary(grant.mod)
@@ -189,14 +203,19 @@ for(n in row.names(grant.vals)) {
 }
 colSums(is.na(edu.df))
 
-# table(edu.df$loanAid) # numerical, 127 missing values
+# remove outliers from the grant aid data (top/bottom 2.5%)
+quantile(edu.df$grantAid, 0.975) # 26516
+quantile(edu.df$grantAid, 0.025) # 2580
+edu.df <- edu.df[edu.df$grantAid < quantile(edu.df$grantAid, 0.975) & edu.df$grantAid > quantile(edu.df$grantAid, 0.025), ] # 2220 obs of 24 variables
+
+# table(edu.df$loanAid) # numerical, 123 missing values
 # calculate all numerical variable correlations for loan aid
 cor(edu.df[, "loanAid"], edu.df[, sapply(edu.df, is.numeric)], use="complete.obs") # there are no strong correlations
 # examine the average and spread of loan aid
-mean(edu.df$loanAid, na.rm=TRUE) # 7436
-quantile(edu.df$loanAid, na.rm=TRUE) # 1060 6631 7306 8280 14400
+mean(edu.df$loanAid, na.rm=TRUE) # 7554
+quantile(edu.df$loanAid, na.rm=TRUE) # 1154 6771 7358 88305 14400
 # replace N/A values in the 'loanAid' column with the mean
-edu.df$loanAid[is.na(edu.df$loanAid)] <- 7436
+edu.df$loanAid[is.na(edu.df$loanAid)] <- 7554
 colSums(is.na(edu.df)) # no missing values :) 
 ```
 
@@ -216,3 +235,5 @@ I found a very high (90%) correlation between in-state and out-of-state tuition,
 I noticed that the region, urban, and size variable level names were quite long, so I shortened them to work better in the data visualizations, and ordered the size and urban levels in ascending order by size and degree of urbanization, respectively. I replaced the 'not applicable' values of the open enrollment variable with 'no' values, since this did imply that open enrollment was not in play. 
 
 I combined the availability of employment services and the availability of placement services into a single variable, since these services are very similar in nature. I also combined tuition guarantee, tuition prepaid, and tuition plan into a single variable to indicate the availability of some type of special tuition payment option.
+
+I also removed the top and bottom 2.5% of the numerical data to get rid of outliers.

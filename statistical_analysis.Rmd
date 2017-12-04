@@ -15,17 +15,32 @@ library(ggplot2)
 
 ### Visualize minority enrollment by region
 ```{r visualize minority enrollment by region}
-boxplot(minorityEnroll~region, data=edu.df, main="Minority Enrollment by Region", xlab="Region", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = region, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Region") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Region") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by hbcu
 ```{r visualize minority enrollment by hbcu}
-boxplot(minorityEnroll~hbcu, data=edu.df, main="Minority Enrollment by HBCU", xlab="HBCU", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = hbcu, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by HBCU") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("HBCU") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by tribal college
 ```{r visualize minority enrollment by tribal college}
-boxplot(minorityEnroll~tribal, data=edu.df, main="Minority Enrollment by Tribal College", xlab="Tribal College", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = tribal, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Tribal College") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Region") + 
+  ylab("Tribal College")
 ```
 
 ### Visualize minority enrollment by urbanization
@@ -43,72 +58,143 @@ ggplot(edu.df, aes(x = urban, y = minorityEnroll)) +
 
 ### Visualize minority enrollment by open enrollment
 ```{r visualize minority enrollment by open enrollment}
-boxplot(minorityEnroll~open, data=edu.df, main="Minority Enrollment by Open Enrollment", xlab="Open Enrollment", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = open, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Open Enrollment") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Open Enrollment") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by land grant institution
 ```{r visualize minority enrollment by land grant institution}
-boxplot(minorityEnroll~landGrant, data=edu.df, main="Minority Enrollment by Land Grant Institution", xlab="Land Grant Institution", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = landGrant, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Land Grant Institution") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Land Grant Institution") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by associate\'s degree offering
 ```{r visualize minority enrollment by associate\'s degree offering}
-boxplot(minorityEnroll~associates, data=edu.df, main="Minority Enrollment by Associate\'s Degree Offering", xlab="Associate\'s Degree Offering", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = associates, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Associate\'s Degree Offering") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Associate\'s Degree Offering") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by distance-only program
 ```{r visualize minority enrollment by distance-only program}
-boxplot(minorityEnroll~allDistance, data=edu.df, main="Minority Enrollment by Distance-Only Program", xlab="Distance-Only Program", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = allDistance, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Distance-Only Program") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Distance-Only Program") + 
+  ylab("Minority Enrollment")
+
 ```
 
 ### Visualize minority enrollment by distance options available
 ```{r visualize minority enrollment by distance options available}
-boxplot(minorityEnroll~partDistance, data=edu.df, main="Minority Enrollment by Distance Options Available", xlab="Distance Options Available", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = partDistance, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Distance Options Available") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Distance Options Available") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by study abroad available
 ```{r visualize minority enrollment by study abroad available}
-boxplot(minorityEnroll~studyAbroad, data=edu.df, main="Minority Enrollment by Study Abroad Available", xlab="Study Abroad Available", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = studyAbroad, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Study Abroad Available") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Study Abroad Available") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by weekend course offerings
 ```{r visualize minority enrollment by weekend course offerings}
-boxplot(minorityEnroll~weekend, data=edu.df, main="Minority Enrollment by Weekend Course Offerings", xlab="Weekend Course Offerings", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = weekend, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Weekend Course Offerings") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Weekend Course Offerings") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by remedial course offerings
 ```{r visualize minority enrollment by remedial course offerings}
-boxplot(minorityEnroll~remedial, data=edu.df, main="Minority Enrollment by Remedial Course Offerings", xlab="Remedial Course Offerings", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = remedial, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Remedial Course Offerings") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Remedial Course Offerings") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by access to counseling
 ```{r visualize minority enrollment by access to counseling}
-boxplot(minorityEnroll~counseling, data=edu.df, main="Minority Enrollment by Access to Counseling", xlab="Access to Counseling", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = counseling, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Access to Counseling") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Access to Counseling") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by access to day care
 ```{r visualize minority enrollment by access to day care}
-boxplot(minorityEnroll~dayCare, data=edu.df, main="Minority Enrollment by Access to Day Care", xlab="Access to Day Care", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = dayCare, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Access to Day Care") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Access to Day Care") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by availability of on-campus housing
 ```{r visualize minority enrollment by availability of on-campus housing}
-boxplot(minorityEnroll~oncampusHousing, data=edu.df, main="Minority Enrollment by Availability of On-Campus Housing", xlab="Availability of On-Campus Housing", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = oncampusHousing, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Availability of On-Campus Housing") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Availability of On-Campus Housing") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by availability of a meal plan
 ```{r visualize minority enrollment by availability of a meal plan}
-boxplot(minorityEnroll~mealPlan, data=edu.df, main="Minority Enrollment by Availability of a Meal Plan", xlab="Availability of a Meal Plan", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = mealPlan, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Availability of a Meal Plan") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Availability of a Meal Plan") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by access to employment or placement services
 ```{r visualize minority enrollment by access to employment or placement services}
-boxplot(minorityEnroll~placeEmploy, data=edu.df, main="Minority Enrollment by Access to Employment or Placement Services", xlab="Access to Employment or Placement Services", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = placeEmploy, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Access to Employment or Placement Services") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Access to Employment or Placement Services") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by availability of tuition options
 ```{r visualize minority enrollment by availability of tuition options}
-boxplot(minorityEnroll~tuitionOptions, data=edu.df, main="Minority Enrollment by Availability of Tuition Options", xlab="Availability of Tuition Options", ylab="Minority Enrollment")
+ggplot(edu.df, aes(x = tuitionOptions, y = minorityEnroll)) +
+  geom_boxplot() +
+  ggtitle("Minority Enrollment by Availability of Tuition Options") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Availability of Tuition Options") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Visualize minority enrollment by size of institution
@@ -128,6 +214,7 @@ ggplot(edu.df, aes(x = size, y = minorityEnroll)) +
 ```{r visualize minority enrollment by cost of in-state tuition}
 ggplot(aes(x = instateTuition, y = minorityEnroll), data = edu.df) + 
   geom_point(alpha = 0.25, color = 'purple') +
+  scale_x_log10() +
   geom_smooth(method = 'lm', color = 'blue') +
   ggtitle("Minority Enrollment by Cost of In-State Tuition") + 
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -150,6 +237,7 @@ ggplot(aes(x = facultyRatio, y = minorityEnroll), data = edu.df) +
 ```{r visualize minority enrollment by average grant aid awarded}
 ggplot(aes(x = grantAid, y = minorityEnroll), data = edu.df) + 
   geom_point(alpha = 0.25, color = 'purple') +
+  scale_x_log10() +
   geom_smooth(method = 'lm', color = 'blue') +
   ggtitle("Minority Enrollment by Average Grant Aid Awarded") + 
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -161,6 +249,7 @@ ggplot(aes(x = grantAid, y = minorityEnroll), data = edu.df) +
 ```{r visualize minority enrollment by average loan aid awarded}
 ggplot(aes(x = loanAid, y = minorityEnroll), data = edu.df) + 
   geom_point(alpha = 0.25, color = 'purple') +
+  scale_x_log10() +
   geom_smooth(method = 'lm', color = 'blue') +
   ggtitle("Minority Enrollment by Average Loan Aid Awarded") + 
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -172,6 +261,7 @@ ggplot(aes(x = loanAid, y = minorityEnroll), data = edu.df) +
 ```{r visualize minority enrollment by both grant aid and tuition cost}
 ggplot(aes(x = grantAid, y = minorityEnroll, color = instateTuition), data = edu.df) + 
   geom_point(alpha = 0.75) +
+  scale_x_log10() +
   scale_color_gradient(low='pink', high='blue') +
   geom_smooth(method = 'lm', color = 'blue') +
   ggtitle("Minority Enrollment by Grant Aid and Tuition Cost") + 
