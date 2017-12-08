@@ -83,7 +83,7 @@ edu.df$blackEnroll <- NULL
 edu.df$latinoEnroll <- NULL # 28 variables
 ```
 
-### Examine the data to determine missing value imputation methods and feature engineer some new independent variables
+### Examine the data to determine missing value imputation methods and feature engineer some new variables
 ```{r examine the data to determine missing value imputation methods}
 # remove rows where data is missing from the dependent variable column
 edu.df <- edu.df[!is.na(edu.df$minorityEnroll),] # 2698 obs of 28 var
@@ -236,4 +236,4 @@ I noticed that the region, urban, and size variable level names were quite long,
 
 I combined the availability of employment services and the availability of placement services into a single variable, since these services are very similar in nature. I also combined tuition guarantee, tuition prepaid, and tuition plan into a single variable to indicate the availability of some type of special tuition payment option.
 
-I also removed the top and bottom 2.5% of the numerical data to get rid of outliers.
+I also removed the top and bottom 2.5% of the numerical data to get rid of outliers and converted the target variable from a numerical variable to a categorial variable so that I could later use a more easily interpretable classification model instead of a regression model.
