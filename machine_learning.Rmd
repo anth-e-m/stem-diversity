@@ -19,8 +19,8 @@ The machine learning technique used to build a model will be a decision tree. Th
 ### Convert minority enrollment to a categorial variable
 ```{r convert minority enrollment to a categorical variable}
 median(edu.df$minorityEnroll) # 19%
-edu.df$minorityEnroll <- with(edu.df, ifelse(minorityEnroll<=19, "Low", "High"))
-table(edu.df$minorityEnroll) # 1131 Low, 1089 High
+edu.df$minorityEnroll <- with(edu.df, ifelse(minorityEnroll<=19, 0, 1))
+table(edu.df$minorityEnroll) # 1131 low (0), 1089 high (1)
 ```
 
 # Split the data into a training set and a testing set
@@ -28,6 +28,58 @@ table(edu.df$minorityEnroll) # 1131 Low, 1089 High
 split = sample.split(edu.df$minorityEnroll, SplitRatio = 0.7)
 train = subset(edu.df, split == TRUE)
 test = subset(edu.df, split == FALSE)
+```
+
+# Create a logistic regression model using all variables
+```{r create a logistic regression model using all variables}
+# create and examine the logistic regression model
+lrModel = glm(minorityEnroll ~ ., data=train, family=binomial)
+summary(lrModel)
+
+# use logistic regression model to predict the target variable
+predTest = predict(lrModel, type="response", newdata=test)
+summary(predTest)
+tapply(predTest, test$minorityEnroll, mean) # 37% prob low, 64% prob high
+table(test$minorityEnroll, predTest > 0.5)
+# (238 + 225) / (238 + 225 + 102 + 101) = 0.6952 accuracy rate at 0.5 threshold
+# (238 + 101) / (238 + 101 + 102 + 225) = 0.5090 baseline model comparison
+
+# plot the ROC curve of the prediction
+library(ROCR)
+ROCpred = prediction(predTest, test$minorityEnroll)
+ROCperf = performance(ROCpred, "tpr", "fpr")
+plot(ROCperf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
+
+# calculate AUC as a quality metric
+as.numeric(performance(ROCpred, "auc")@y.values)
+# 0.7809 accuracy rate per the area under the ROC curve
+
+# use stepwise selection to select more specific variables for the model
+library(MASS)
+fit <- glm(minorityEnroll ~ ., data=train, family=binomial)
+step <- stepAIC(fit, direction="both")
+step$anova # provides a final recommended model (below)
+
+# create and examine the updated logistic regression model
+lrModel2 = glm(minorityEnroll ~ region + hbcu + tribal + urban + landGrant + allDistance + weekend + remedial + mealPlan + facultyRatio + grantAid + loanAid + placeEmploy + tuitionOptions, data=train, family=binomial)
+summary(lrModel2)
+
+# use updated logistic regression model to predict the target variable
+predTest2 = predict(lrModel2, type="response", newdata=test)
+summary(predTest2)
+tapply(predTest2, test$minorityEnroll, mean) # 37% prob low, 64% prob high
+table(test$minorityEnroll, predTest2 > 0.5)
+# (237 + 225) / (237 + 225 + 102 + 102) = 0.6937 accuracy rate at 0.5 threshold
+# (237 + 102) / (237 + 102 + 102 + 225) = 0.5090 baseline model comparison
+
+# plot the ROC curve of the prediction
+ROCpred2 = prediction(predTest2, test$minorityEnroll)
+ROCperf2 = performance(ROCpred2, "tpr", "fpr")
+plot(ROCperf2, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
+
+# calculate AUC as a quality metric
+as.numeric(performance(ROCpred2, "auc")@y.values)
+# 0.7821 accuracy rate per the area under the ROC curve
 ```
 
 ### Create a decision tree model using all variables
@@ -39,17 +91,47 @@ set.seed(1000)
 
 # create and examine the decision tree
 decTree = rpart(minorityEnroll ~ ., data=train, method="class", control=rpart.control(minbucket=25))
-prp(decTree)
 plotcp(decTree)
+prp(decTree)
 
-# 5 variables used in the tree: region, grant aid, loan aid, student-faculty ratio, and location urbanization level
+# 4 variables used in the tree: region, grant aid, loan aid, in-state tuition
 
 # use decision tree model to predict the target variable
 prediction = predict(decTree, newdata=test, type="class")
 table(test$minorityEnroll, prediction)
-# (217 + 266) / (217 + 266 + 110 + 73) = 0.725 accuracy rate
+# (253 + 204) / (253 + 204 + 123 + 86) = 0.6862 accuracy rate
+
+# plot the ROC curve of the prediction
+predROC = predict(decTree, newdata = test)
+pred = prediction(predROC[,2], test$minorityEnroll)
+perf = performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
+
+# calculate AUC as a quality metric
+predAUC = predict(decTree, newdata=test, type="class")
+rocObj <- roc(test$minorityEnroll, as.vector(as.numeric(predAUC)))
+auc(rocObj) # 0.6851 accuracy rate per the area under the ROC curve
+
+# use k-fold cross-validation to determine the correct complexity parameter
+library(caret)
+library(e1071)
+fitControl = trainControl(method="cv", number = 10)
+cartGrid = expand.grid(.cp=(1:50)*0.01)
+tr = train(minorityEnroll ~ ., data=train, method="rpart", trControl=fitControl, tuneGrid=cartGrid) # cp = 0.01
+decTreeCV = rpart(minorityEnroll ~., method="class", data=train, control=rpart.control(cp=0.01))
+predCV = predict(decTreeCV, newdata=test, type="class")
+table(test$minorityEnroll, predCV)
+# (251 + 213) / (251 + 213 + 114 + 88) = 0.6967 accuracy rate 
+# (251 + 88) / (251 + 88 + 114 + 213) = 0.5090 baseline model comparison
+bestTree = tr$finalModel
+prp(bestTree) # this tree is different than the original tree, and uses the 5 independent variables loan aid, region, in-state tuition, meal plan, and degree of urbanization
+
+# calculate AUC as a quality metric for the adjusted tree
+predAUC2 = predict(decTreeCV, newdata = test, type="class")
+rocObj2 <- roc(test$minorityEnroll, as.vector(as.numeric(predAUC2)))
+auc(rocObj2) # 0.6959 accuracy rate per the area under the ROC curve
 ```
 
-### Machine learning summary continued - evaluation of decision tree model
+### Machine learning summary continued - evaluation of the models
 
-The decision tree model accurately predicted 72.5% of the outcome variable. The final independent variables used in the decision tree model are region, grant aid, loan aid, student-faculty ratio, and location urbanization level.
+The decision tree model accurately predicts the outcome variable about 70% of the time, whereas the logistic regression model accurately predicts the outcome variable about 78% of the time.
