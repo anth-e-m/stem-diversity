@@ -6,6 +6,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# once I have the correct cutoff value create the lr model on the test data
 ```
 
 ### Machine learning summary
@@ -25,65 +26,65 @@ table(edu.df$minorityEnroll) # 1131 low (0), 1089 high (1)
 
 # Split the data into a training set and a testing set
 ```{r split the data into a training set and a testing set}
+set.seed(500)
 split = sample.split(edu.df$minorityEnroll, SplitRatio = 0.7)
 train = subset(edu.df, split == TRUE)
 test = subset(edu.df, split == FALSE)
 ```
 
-# Create a logistic regression model using all variables
-```{r create a logistic regression model using all variables}
-# create and examine the logistic regression model
+# Create and tune a logistic regression model 
+```{r create and tune a logistic regression model}
+# create and examine a logistic regression model using all variables
 lrModel = glm(minorityEnroll ~ ., data=train, family=binomial)
 summary(lrModel)
 
 # use logistic regression model to predict the target variable
-predTest = predict(lrModel, type="response", newdata=test)
-summary(predTest)
-tapply(predTest, test$minorityEnroll, mean) # 37% prob low, 64% prob high
-table(test$minorityEnroll, predTest > 0.5)
-# (238 + 225) / (238 + 225 + 102 + 101) = 0.6952 accuracy rate at 0.5 threshold
-# (238 + 101) / (238 + 101 + 102 + 225) = 0.5090 baseline model comparison
-
-# plot the ROC curve of the prediction
-library(ROCR)
-ROCpred = prediction(predTest, test$minorityEnroll)
-ROCperf = performance(ROCpred, "tpr", "fpr")
-plot(ROCperf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
-
-# calculate AUC as a quality metric
-as.numeric(performance(ROCpred, "auc")@y.values)
-# 0.7809 accuracy rate per the area under the ROC curve
+predTrain = predict(lrModel, type="response")
+summary(predTrain)
+tapply(predTrain, train$minorityEnroll, mean) # 33% prob low, 66% prob high
 
 # use stepwise selection to select more specific variables for the model
 library(MASS)
-fit <- glm(minorityEnroll ~ ., data=train, family=binomial)
-step <- stepAIC(fit, direction="both")
+step <- stepAIC(lrModel, direction="both")
 step$anova # provides a final recommended model (below)
 
 # create and examine the updated logistic regression model
-lrModel2 = glm(minorityEnroll ~ region + hbcu + tribal + urban + landGrant + allDistance + weekend + remedial + mealPlan + facultyRatio + grantAid + loanAid + placeEmploy + tuitionOptions, data=train, family=binomial)
+lrModel2 = glm(minorityEnroll ~ region + hbcu + tribal + urban + landGrant + partDistance + studyAbroad + weekend + remedial + mealPlan + facultyRatio + loanAid + placeEmploy + tuitionOptions, data=train, family=binomial)
 summary(lrModel2)
 
-# use updated logistic regression model to predict the target variable
-predTest2 = predict(lrModel2, type="response", newdata=test)
-summary(predTest2)
-tapply(predTest2, test$minorityEnroll, mean) # 37% prob low, 64% prob high
-table(test$minorityEnroll, predTest2 > 0.5)
-# (237 + 225) / (237 + 225 + 102 + 102) = 0.6937 accuracy rate at 0.5 threshold
-# (237 + 102) / (237 + 102 + 102 + 225) = 0.5090 baseline model comparison
+# use tuned logistic regression model to make predictions on the training data
+predTrain2 = predict(lrModel2, type="response")
+summary(predTrain2)
+tapply(predTrain2, train$minorityEnroll, mean) # 33% prob low, 66% prob high
 
-# plot the ROC curve of the prediction
-ROCpred2 = prediction(predTest2, test$minorityEnroll)
-ROCperf2 = performance(ROCpred2, "tpr", "fpr")
-plot(ROCperf2, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
+# plot the ROC curve for the model and the training data
+predTrain = predict(lrModel2, type="response")
+ROCRpred = prediction(predTrain, train$minorityEnroll)
+ROCRperf = performance(ROCRpred, "tpr", "fpr")
+plot(ROCRperf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
+
+# calculate AUC as a quality metric and select the best threshold value
+auc = as.numeric(performance(ROCRpred, "auc")@y.values)
+thresh = as.numeric(performance(ROCRpred, "auc")@x.values)
+# 0.8319 accuracy rate per the area under the ROC curve
+Rperf = performance(ROCRpred, "auc")
+max = which.max(slot(Rperf, "y.values")[[1]])
+acc = slot(Rperf, "y.values")[[1]][max]
+cut = slot(Rperf, "x.values")[[1]][max]
+
+# plot the ROC curve for the model and the test data
+predTest = predict(lrModel2, type="response", newdata=test)
+ROCRpred2 = prediction(predTest, test$minorityEnroll)
+ROCRperf2 = performance(ROCRpred2, "tpr", "fpr")
+plot(ROCRperf2, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
 
 # calculate AUC as a quality metric
-as.numeric(performance(ROCpred2, "auc")@y.values)
-# 0.7821 accuracy rate per the area under the ROC curve
+auc = as.numeric(performance(ROCRpred2, "auc")@y.values)
+# 0.7856 accuracy rate per the area under the ROC curve
 ```
 
-### Create a decision tree model using all variables
-```{r create a decision tree model using all variables}
+### Create and tune a decision tree model 
+```{r create and tune a decision tree model}
 library(caTools)
 library(rpart)
 library(rpart.plot)
