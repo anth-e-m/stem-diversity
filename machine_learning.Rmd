@@ -15,7 +15,7 @@ The machine learning problem that I am exploring in this analysis is how to pred
 
 The independent variables that will be used in the initial model are location region, HBCU status, tribal college status, degree of location urbanization, open enrollment status, land grant status, Associate's degree offering, all-distance courses, some distance courses, study abroad offering, weekend courses, remedial courses, counseling access, day care access, on-campus housing, meal plan offering, cost of in-state tuition, size, student-faculty ratio, average grant aid, averag loan aid, employment/placement services, and access to tuition payment options. The dependent variable is the categorical level of minority enrollment (defined as African-American and Hispanic/Latino enrollment) at the institution. 
 
-The machine learning technique used to build a model will be a decision tree. The percentage of accurate predictions will be calculated to determine the model accuracy. 
+The machine learning techniques used to build a model will be a logistic regression model and a decision tree. The area under the ROC curve and the percentage of accurate predictions will be calculated to determine the best model and its performance value.
 
 ### Convert minority enrollment to a categorial variable
 ```{r convert minority enrollment to a categorical variable}
@@ -58,29 +58,35 @@ summary(predTrain2)
 tapply(predTrain2, train$minorityEnroll, mean) # 33% prob low, 66% prob high
 
 # plot the ROC curve for the model and the training data
-predTrain = predict(lrModel2, type="response")
-ROCRpred = prediction(predTrain, train$minorityEnroll)
+ROCRpred = prediction(predTrain2, train$minorityEnroll)
 ROCRperf = performance(ROCRpred, "tpr", "fpr")
 plot(ROCRperf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
 
-# calculate AUC as a quality metric and select the best threshold value
-auc = as.numeric(performance(ROCRpred, "auc")@y.values)
-thresh = as.numeric(performance(ROCRpred, "auc")@x.values)
-# 0.8319 accuracy rate per the area under the ROC curve
-Rperf = performance(ROCRpred, "auc")
-max = which.max(slot(Rperf, "y.values")[[1]])
-acc = slot(Rperf, "y.values")[[1]][max]
-cut = slot(Rperf, "x.values")[[1]][max]
+# calculate AUC as a quality metric
+aucTrain = as.numeric(performance(ROCRpred, "auc")@y.values) # 0.8319 quality
 
-# plot the ROC curve for the model and the test data
+# select the best threshold value to use
+cm1 <- table(train$minorityEnroll, predTrain2 > 0.5)
+# accuracy = (618 + 552) / (618 + 552 + 210 + 174) = 0.7529
+cm2 <- table(train$minorityEnroll, predTrain2 > 0.6)
+# accuracy = (684 + 464) / (684 + 464 + 298 + 108) = 0.7387
+# 0.5 has the higher overall accuracy, so it will be used as the threshold
+
+# use the model to make predictions and plot the ROC curve for the test data
 predTest = predict(lrModel2, type="response", newdata=test)
 ROCRpred2 = prediction(predTest, test$minorityEnroll)
 ROCRperf2 = performance(ROCRpred2, "tpr", "fpr")
 plot(ROCRperf2, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
 
 # calculate AUC as a quality metric
-auc = as.numeric(performance(ROCRpred2, "auc")@y.values)
-# 0.7856 accuracy rate per the area under the ROC curve
+aucTest = as.numeric(performance(ROCRpred2, "auc")@y.values) # 0.7856 quality
+
+# generate a confusion matrix using the 0.5 selected threshold value
+cmTest <- table(test$minorityEnroll, predTest > 0.5)
+# Overall Accuracy ((TN+TP)/N): (254 + 225) / (254 + 225 + 102 + 85) = 0.7192
+# Sensitivity (TP/(TP+FN)): 225 / (225 + 102) = 0.6881
+# Specificity (TN/(TN+FP): 254 / (254 + 85) = 0.7493
+# (254 + 85) / (254 + 85 + 225 + 102) = 0.5090 baseline model comparison
 ```
 
 ### Create and tune a decision tree model 
@@ -88,30 +94,12 @@ auc = as.numeric(performance(ROCRpred2, "auc")@y.values)
 library(caTools)
 library(rpart)
 library(rpart.plot)
-set.seed(1000)
 
 # create and examine the decision tree
 decTree = rpart(minorityEnroll ~ ., data=train, method="class", control=rpart.control(minbucket=25))
 plotcp(decTree)
 prp(decTree)
-
-# 4 variables used in the tree: region, grant aid, loan aid, in-state tuition
-
-# use decision tree model to predict the target variable
-prediction = predict(decTree, newdata=test, type="class")
-table(test$minorityEnroll, prediction)
-# (253 + 204) / (253 + 204 + 123 + 86) = 0.6862 accuracy rate
-
-# plot the ROC curve of the prediction
-predROC = predict(decTree, newdata = test)
-pred = prediction(predROC[,2], test$minorityEnroll)
-perf = performance(pred, "tpr", "fpr")
-plot(perf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
-
-# calculate AUC as a quality metric
-predAUC = predict(decTree, newdata=test, type="class")
-rocObj <- roc(test$minorityEnroll, as.vector(as.numeric(predAUC)))
-auc(rocObj) # 0.6851 accuracy rate per the area under the ROC curve
+# 6 variables used in the tree: region, mealPlan, loanAid, urban, instateTuition, weekend
 
 # use k-fold cross-validation to determine the correct complexity parameter
 library(caret)
@@ -119,20 +107,39 @@ library(e1071)
 fitControl = trainControl(method="cv", number = 10)
 cartGrid = expand.grid(.cp=(1:50)*0.01)
 tr = train(minorityEnroll ~ ., data=train, method="rpart", trControl=fitControl, tuneGrid=cartGrid) # cp = 0.01
-decTreeCV = rpart(minorityEnroll ~., method="class", data=train, control=rpart.control(cp=0.01))
-predCV = predict(decTreeCV, newdata=test, type="class")
-table(test$minorityEnroll, predCV)
-# (251 + 213) / (251 + 213 + 114 + 88) = 0.6967 accuracy rate 
-# (251 + 88) / (251 + 88 + 114 + 213) = 0.5090 baseline model comparison
-bestTree = tr$finalModel
-prp(bestTree) # this tree is different than the original tree, and uses the 5 independent variables loan aid, region, in-state tuition, meal plan, and degree of urbanization
+decTree2 = rpart(minorityEnroll ~., method="class", data=train, control=rpart.control(cp=0.01))
+prp(decTree2)
+# same 6 variables, though some differences in the tree structure
+
+# plot the ROC curve of the prediction
+predROC = predict(decTree2)
+pred = prediction(predROC[,2], train$minorityEnroll)
+perf = performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
+
+# calculate AUC as a quality metric
+rocObj <- roc(train$minorityEnroll, as.vector(as.numeric(predROC)))
+auc(rocObj) # 0.7357 quality
+
+# use the model to make predictions and plot the ROC curve for the test data
+predCV = predict(decTree2, newdata=test)
+pred2 = prediction(predCV[,2], test$minorityEnroll)
+perf2 = performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE, print.cutoffs.at=seq(0,1,0.1), text.adj=c(-0.2,1.7))
 
 # calculate AUC as a quality metric for the adjusted tree
-predAUC2 = predict(decTreeCV, newdata = test, type="class")
+predAUC2 = predict(decTree2, newdata=test, type="class")
 rocObj2 <- roc(test$minorityEnroll, as.vector(as.numeric(predAUC2)))
-auc(rocObj2) # 0.6959 accuracy rate per the area under the ROC curve
+auc(rocObj2) # 0.6949 quality
+
+# generate a confusion matrix
+cmTest2 <- table(test$minorityEnroll, predAUC2)
+# Overall Accuracy ((TN+TP)/N): (241 + 222) / (241 + 222 + 105 + 98) = 0.6952
+# Sensitivity (TP/(TP+FN)): 222 / (222 + 105) = 0.6789
+# Specificity (TN/(TN+FP): 241 / (241 + 98) = 0.7109
+# (241 + 98) / (241 + 98 + 105 + 222) = 0.5090 baseline model comparison
 ```
 
 ### Machine learning summary continued - evaluation of the models
 
-The decision tree model accurately predicts the outcome variable about 70% of the time, whereas the logistic regression model accurately predicts the outcome variable about 78% of the time.
+The decision tree model accurately predicts the outcome variable about 70% of the time with 69% AUC, whereas the logistic regression model accurately predicts the outcome variable about 72% of the time with 79% AUC. Both models significantly outperform the baseline model, which predicts high or low minority enrollment with only 51% accuracy.

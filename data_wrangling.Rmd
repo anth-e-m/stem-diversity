@@ -236,4 +236,4 @@ I noticed that the region, urban, and size variable level names were quite long,
 
 I combined the availability of employment services and the availability of placement services into a single variable, since these services are very similar in nature. I also combined tuition guarantee, tuition prepaid, and tuition plan into a single variable to indicate the availability of some type of special tuition payment option.
 
-I also removed the top and bottom 2.5% of the numerical data to get rid of outliers and converted the target variable from a numerical variable to a categorial variable so that I could later use a more easily interpretable classification model instead of a regression model.
+I also removed the top and bottom 2.5% of the numerical data to get rid of outliers.

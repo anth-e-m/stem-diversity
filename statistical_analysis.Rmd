@@ -6,6 +6,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# divide data into buckets and plot the buckets as facets (multiple plots side
+# by side with the different bucket values)
 ```
 
 ### Include the ggplot2 library
@@ -269,6 +271,21 @@ ggplot(aes(x = grantAid, y = minorityEnroll, color = instateTuition), data = edu
   xlab("Average Grant Aid Awarded") + 
   ylab("Minority Enrollment") +
   labs(colour = "In-State Tuition") 
+```
+
+### Visualize minority enrollment by total financial aid
+```{r visualize minority enrollment by total financial aid}
+# combine grant aid and loan aid into total financial aid
+edu.df$totalAid <- edu.df$grantAid + edu.df$loanAid
+
+ggplot(aes(x = (instateTuition/totalAid), y = minorityEnroll), data = edu.df) +
+  geom_point(alpha = 0.25, color = 'purple') +
+  scale_x_log10() +
+  geom_smooth(method = 'lm', color = 'blue') +
+  ggtitle("Minority Enrollment by Average Total Financial Aid Awarded") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Average Total Financial Aid Awarded") + 
+  ylab("Minority Enrollment")
 ```
 
 ### Statistical analysis summary
